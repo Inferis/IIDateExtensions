@@ -13,23 +13,52 @@ NSDate* II_convertToDate(double minutes, double julianday);
 
 @implementation NSDate (SolarInfo)
 
-#ifndef II_CLEAN_NAMESPACE
-- (NSDate*)sunsetAtLatitude:(double)latitude longitude:(double)longitude {
-    return [self II_sunsetAtLatitude:latitude longitude:longitude];
+- (BOOL)II_isSunRisenAtLatitude:(double)latitude longitude:(double)longitude {
+    NSDate* sunrise = [self sunriseAtLatitude:latitude longitude:longitude];
+    NSDate* sunset = [self sunsetAtLatitude:latitude longitude:longitude];
+    
+    return [self isLaterThan:sunrise] && [self isEarlierThan:sunset];
 }
 
-- (NSDate*)sunriseAtLatitude:(double)latitude longitude:(double)longitude {
-    return [self II_sunriseAtLatitude:latitude longitude:longitude];
+#ifndef II_CLEAN_NAMESPACE
+- (BOOL)isSunRisenAtLatitude:(double)latitude longitude:(double)longitude {
+    return [self II_isSunRisenAtLatitude:latitude longitude:longitude];
 }
 #endif
+
+- (BOOL)II_isSunSetAtLatitude:(double)latitude longitude:(double)longitude {
+    NSDate* sunrise = [self sunriseAtLatitude:latitude longitude:longitude];
+    NSDate* sunset = [self sunsetAtLatitude:latitude longitude:longitude];
+    
+    return [self isEarlierThan:sunrise] || [self isLaterThan:sunset];
+}
+
+#ifndef II_CLEAN_NAMESPACE
+- (BOOL)isSunSetAtLatitude:(double)latitude longitude:(double)longitude {
+    return [self II_isSunSetAtLatitude:latitude longitude:longitude];
+}
+#endif
+
 
 - (NSDate*)II_sunsetAtLatitude:(double)latitude longitude:(double)longitude {
     return [self II_sunset:YES atLatitude:latitude longitude:longitude];
 }
 
+#ifndef II_CLEAN_NAMESPACE
+- (NSDate*)sunsetAtLatitude:(double)latitude longitude:(double)longitude {
+    return [self II_sunsetAtLatitude:latitude longitude:longitude];
+}
+#endif
+
 - (NSDate*)II_sunriseAtLatitude:(double)latitude longitude:(double)longitude {
     return [self II_sunset:NO atLatitude:latitude longitude:longitude];
 }
+
+#ifndef II_CLEAN_NAMESPACE
+- (NSDate*)sunriseAtLatitude:(double)latitude longitude:(double)longitude {
+    return [self II_sunriseAtLatitude:latitude longitude:longitude];
+}
+#endif
 
 - (NSDate*)II_sunset:(BOOL)sunset atLatitude:(double)latitude longitude:(double)longitude {
     double julian = [self II_julianDateFromNSDate:self];
